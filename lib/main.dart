@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:text_app/firebase_options.dart';
 import 'package:text_app/screens/onboarding_screen.dart';
 
@@ -16,13 +17,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Talkrr',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: const OnBoardingScreen(),
+    return ScreenUtilInit(
+      designSize: const Size(384, 838.4),
+      builder: (context, child) {
+        return MaterialApp(
+          title: 'Talkrr',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          debugShowCheckedModeBanner: false,
+          home: const OnBoardingScreen(),
+        );
+      },
     );
   }
 }
