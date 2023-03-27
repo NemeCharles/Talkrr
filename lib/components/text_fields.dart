@@ -7,11 +7,13 @@ class TextArea extends StatelessWidget {
     this.hintText = 'Enter Email',
     this.isPassword = false,
     this.isUsername = false,
+    required this.controller
   });
 
   final String hintText;
   final bool isPassword;
   final bool isUsername;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class TextArea extends StatelessWidget {
           SizedBox(
             width: 270.w,
             child: TextField(
+              controller: controller,
               keyboardType: isUsername ? TextInputType.name : isPassword ? TextInputType.visiblePassword  : TextInputType.emailAddress,
               autocorrect: false,
               style: TextStyle(fontSize: 17.sp),
