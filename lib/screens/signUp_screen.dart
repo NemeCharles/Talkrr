@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:text_app/screens/signIn_screen.dart';
+import '../components/account_tile.dart';
 import '../components/text_fields.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -92,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     SizedBox(height: 8.h,),
-                    const TextArea(hintText: 'Enter Username', isUsername: true),
+                    TextArea(controller: username, hintText: 'Enter Username', isUsername: true),
                     SizedBox(height: 8.h,),
                     Text(
                         'Enter Email Address',
@@ -102,7 +104,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     SizedBox(height: 8.h,),
-                    const TextArea(),
+                    TextArea(
+                      controller: email,
+                    ),
                     SizedBox(height: 8.h,),
                     Text(
                         'Create Password',
@@ -112,7 +116,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     SizedBox(height: 8.h,),
-                    const TextArea(hintText: 'Enter Password', isPassword : true),
+                    TextArea(
+                        controller: password1,
+                        hintText: 'Enter Password',
+                        isPassword : true
+                    ),
                     SizedBox(height: 8.h,),
                     Text(
                       'Re-Enter Password',
@@ -122,22 +130,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     SizedBox(height: 8.h,),
-                    const TextArea(hintText: 'Re-Enter Password', isPassword : true),
+                    TextArea(controller: password2, hintText: 'Re-Enter Password', isPassword : true),
                     SizedBox(height: 25.h,),
-                    Container(
-                      height: 40,
-                      width: 344.w,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: const Color(0XFF0BC4D9),
-                          borderRadius: BorderRadius.circular(15)
-                      ),
-                      child: Text(
-                        'Sign In',
-                        style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0XFFF4F4F4)
+                    GestureDetector(
+                      onTap: () async {
+                        if(password1.text == password2.text){
+                          print('SUCCESS');
+                        } else {print ('Unmatched Passwords');}
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 344.w,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: const Color(0XFF0BC4D9),
+                            borderRadius: BorderRadius.circular(15)
+                        ),
+                        child: Text(
+                          'Sign In',
+                          style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0XFFF4F4F4)
+                          ),
                         ),
                       ),
                     ),
@@ -152,6 +167,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           color: Colors.grey.withOpacity(0.7),
                         ),
                       ),
+                    ),
+                    SizedBox(height: 20.h,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        AccountImageTile(imagePath: 'google.png',),
+                        AccountImageTile(imagePath: 'apple.png',),
+                        AccountImageTile(imagePath: 'facebook.png',),
+                      ],
+                    ),
+                    SizedBox(height: 20.h,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have an account? ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            color: Colors.grey.withOpacity(0.7),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (BuildContext context) => const SignInScreen()
+                                )
+                            );
+                          },
+                          child: Text(
+                            'Sign in',
+                            style: TextStyle(
+                                color: const Color(0XFF0BC4D9),
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500
+                            ),
+                          ),
+                        )
+                      ],
                     )
                   ],
                 )
@@ -163,4 +217,5 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
+
 

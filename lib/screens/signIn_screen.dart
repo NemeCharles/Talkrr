@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:text_app/screens/signUp_screen.dart';
+import '../components/account_tile.dart';
 import '../components/text_fields.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -89,7 +90,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       SizedBox(height: 8.h,),
-                      const TextArea(),
+                      TextArea(
+                        controller: email,
+                      ),
                       SizedBox(height: 8.h,),
                       Text(
                         'Enter Password',
@@ -99,7 +102,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       SizedBox(height: 8.h,),
-                      const TextArea(hintText: 'Enter Password', isPassword : true),
+                      TextArea(controller: password, hintText: 'Enter Password', isPassword : true),
                       SizedBox(height: 10.h,),
                       Align(
                         alignment: Alignment.centerRight,
@@ -115,20 +118,23 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       SizedBox(height: 20.h,),
-                      Container(
-                        height: 40,
-                        width: 344.w,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            color: const Color(0XFF0BC4D9),
-                            borderRadius: BorderRadius.circular(15)
-                        ),
-                        child: Text(
-                          'Sign In',
-                          style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0XFFF4F4F4)
+                      GestureDetector(
+                        onTap: () async {},
+                        child: Container(
+                          height: 40,
+                          width: 344.w,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              color: const Color(0XFF0BC4D9),
+                              borderRadius: BorderRadius.circular(15)
+                          ),
+                          child: Text(
+                            'Sign In',
+                            style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0XFFF4F4F4)
+                            ),
                           ),
                         ),
                       ),
@@ -144,7 +150,16 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 200.h,),
+                      SizedBox(height: 20.h,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          AccountImageTile(imagePath: 'google.png',),
+                          AccountImageTile(imagePath: 'apple.png',),
+                          AccountImageTile(imagePath: 'facebook.png',),
+                        ],
+                      ),
+                      SizedBox(height: 180.h,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -173,7 +188,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                           )
                         ],
-                      )
+                      ),
                     ],
                   )
               )
