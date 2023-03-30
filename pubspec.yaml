@@ -40,6 +40,8 @@ dependencies:
   firebase_messaging: ^14.3.0
   cloud_firestore: ^4.4.5
   flutter_screenutil: ^5.7.0
+  google_sign_in: ^6.0.2
+  flutter_facebook_auth: ^5.0.8
 
 dev_dependencies:
   flutter_test:
