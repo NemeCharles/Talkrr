@@ -49,3 +49,57 @@ class TextArea extends StatelessWidget {
     );
   }
 }
+
+
+class MessageField extends StatelessWidget {
+  const MessageField({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 315.w,
+      height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.emoji_emotions,
+            size: 28.sp,
+            color: const Color(0XFF0BC4D9),
+          ),
+          SizedBox(width: 7.w,),
+          SizedBox(
+            width: 250,
+            child: TextField(
+              keyboardType: TextInputType.multiline,
+              style: TextStyle(fontSize: 18.sp),
+              maxLines: 2,
+              cursorHeight: 20.h,
+              decoration: const InputDecoration(
+                  hintText: 'Type your message',
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.zero
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+
+// keytool -list -v \-alias androiddebugkey -keystore %USERPROFILE%\.android\debug.keystore
+// .\keytool -list -v \ -alias androiddebugkey -keystore %USERPROFILE%\.android\debug.keystore
+//
+//
+// C:\Program Files\Android\Android Studio\jre\bin
+// keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
