@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../components/call_tile.dart';
-import '../components/massage_tile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -29,104 +27,83 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
       return Scaffold(
         backgroundColor: const Color(0XFFF4F4F4),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                width: double.maxFinite,
-                height: 120.h,
-                decoration: const BoxDecoration(
-                  color: Color(0XFF0BC4D9),
+        body: NestedScrollView(
+          headerSliverBuilder: (context, isScrolled) {
+            return [
+              SliverAppBar(
+                pinned: true,
+                floating: true,
+                elevation: 0,
+                toolbarHeight: 50.h,
+                backgroundColor: const Color(0XFF0BC4D9),
+                expandedHeight: 120.h,
+                title: Text(
+                  'Talkrr',
+                  style: TextStyle(
+                      fontSize: 30.sp,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0XFFF4F4F4)
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    SizedBox(height: 20.h,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                            'Talkrr',
-                          style: TextStyle(
-                            fontSize: 30.sp,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0XFFF4F4F4)
-                          ),
-                        ),
-                        SizedBox(
-                          width: 90.w,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Icon(
-                                  Icons.camera_alt_outlined,
-                                size: 25,
-                                color: Color(0XFFF4F4F4),
-                              ),
-                              Icon(
-                                  Icons.search_sharp,
-                                size: 25,
-                                color: Color(0XFFF4F4F4),
-                              ),
-                              Icon(
-                                  Icons.more_vert,
-                                size: 25,
-                                color: Color(0XFFF4F4F4),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
+                centerTitle: false,
+                actions: [
+                  const Icon(
+                    Icons.camera_alt_outlined,
+                    size: 25,
+                    color: Color(0XFFF4F4F4),
+                  ),
+                  SizedBox(width: 15.w),
+                  const Icon(
+                    Icons.search_sharp,
+                    size: 25,
+                    color: Color(0XFFF4F4F4),
+                  ),
+                  SizedBox(width: 15.w,),
+                  const Icon(
+                    Icons.more_vert,
+                    size: 25,
+                    color: Color(0XFFF4F4F4),
+                  ),
+                  SizedBox(width: 10.w,)
+                ],
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(49.h),
+                  child: TabBar(
+                    controller: _tabController,
+                    isScrollable: false,
+                    indicatorWeight: 3,
+                    indicatorColor: const Color(0XFFF4F4F4),
+                    labelColor:  const Color(0XFFF4F4F4),
+                    unselectedLabelColor: const Color(0XFFF4F4F4),
+                    labelStyle: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15.sp
                     ),
-                    SizedBox(height: 20.h,),
-                    SizedBox(
-                      width: double.maxFinite,
-                      child: TabBar(
-                        controller: _tabController,
-                        isScrollable: false,
-                        indicatorColor:  const Color(0XFFF4F4F4),
-                        indicatorWeight: 3.0,
-                        labelColor:  const Color(0XFFF4F4F4),
-                        labelStyle: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15
-                        ),
-                        unselectedLabelColor: const Color(0XFFF4F4F4),
-                        tabs: const [
-                          Tab(text: 'Chat',),
-                          Tab(text: 'Stories',),
-                          Tab(text: 'Calls',),
-                        ],
+                    tabs: const [
+                      Tab(
+                        text: 'Chats',
                       ),
-                    )
-                  ],
+                      Tab(
+                        text: 'Stories',
+                      ),
+                      Tab(
+                          text: 'Calls'
+                      )
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(
-                height: 694.4.h,
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    SingleChildScrollView(
-                      child: Column(
-                        children: const [
-                          MessageTile(),
-                        ],
-                      ),
-                    ),
-                    const Center(child: Text('No Status'),),
-                    ListView(
-                      children: const [
-                        CallTile()
-                      ],
-                    ),
-                  ],
-                )
-              )
+            ];
+          },
+          body: TabBarView(
+            controller: _tabController,
+            children: const [
+              Center(child: Text('Chats'),),
+              Center(child: Text('Stories'),),
+              Center(child: Text('Calls'),)
             ],
           ),
-        ),
+        )
       );
   }
 }
