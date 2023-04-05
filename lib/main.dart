@@ -3,9 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:text_app/firebase_options.dart';
 import 'package:text_app/screens/onboarding_screen.dart';
+import 'package:text_app/storage_services/hive_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await HiveServices.initialiseBoxes();
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
