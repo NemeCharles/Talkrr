@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:text_app/storage_services/hive_services.dart';
+import 'package:text_app/storage_services/user_info/user_info.dart';
 import 'package:text_app/user_model/user.dart';
 
 class FireAuth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference _userStore = FirebaseFirestore.instance.collection('user');
-
-  // Sign Up with Email and Password
+  final _hive = HiveServices();
 
   Future<void> signUpEmail (String email, String password, String displayName) async {
     try{
@@ -25,7 +26,16 @@ class FireAuth {
               uid: user.user?.uid,
               profilePhoto: '',
             )
-        ).then((value) => print('USER SAVED SUCCESSFULLY'));
+        ).then((value) {
+          _hive.addUser(
+            LoggedInUserData(
+              userName: displayName,
+              email: email,
+              uid: user.user!.uid,
+              profilePhoto: '',
+            )
+          );
+        });
       }
     } on FirebaseAuthException catch (e) {
       print(e.code);
@@ -37,6 +47,7 @@ class FireAuth {
   // Sign in with Email and Password
 
   Future<void> signInEmail (String email, String password) async {
+
     try{
       UserCredential user = await _auth.
       signInWithEmailAndPassword(email: email, password: password);
@@ -45,8 +56,17 @@ class FireAuth {
       await _userStore.withConverter<UserData>(
           fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
           toFirestore: (userData, _) => userData.toJson()
-      ).where('uid', isEqualTo: user.user?.uid).get().then((value) =>
-          print('USERNAME: ${value.docs.first.data().displayName}'));
+      ).where('uid', isEqualTo: user.user?.uid).get().then((value) async {
+          final test = value.docs.first.data();
+          await _hive.addUser(
+            LoggedInUserData(
+              userName: test.displayName.toString(),
+              email: test.email.toString(),
+              uid: test.uid.toString(),
+              profilePhoto: test.profilePhoto.toString(),
+            )
+          );
+      });
 
     } on FirebaseAuthException catch (e) {
       print(e.code);
@@ -65,6 +85,7 @@ class FireAuth {
     try {
       await _auth.signOut();
       print('SUCCESSFUL');
+      await _hive.deleteUser();
     } catch (e) {
       print(e);
     }
