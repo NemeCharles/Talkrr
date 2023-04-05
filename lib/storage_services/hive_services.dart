@@ -36,4 +36,11 @@ class HiveServices {
     await _box.close();
   }
 
+  bool userLoggedIn() {
+    final user =  _box.get(_userDataStorageKey);
+    if(user == null) {
+      return false;
+    } else {return true;}
+  }
+
 }
