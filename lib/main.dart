@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:text_app/firebase_options.dart';
+import 'package:text_app/screens/home_screen.dart';
 import 'package:text_app/screens/onboarding_screen.dart';
 import 'package:text_app/storage_services/hive_services.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
           debugShowCheckedModeBanner: false,
-          home: const OnBoardingScreen(),
+          home: HiveServices().userLoggedIn() ? const HomeScreen() : const OnBoardingScreen(),
         );
       },
     );
