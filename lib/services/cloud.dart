@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/user.dart';
 import '../storage_services/hive_services.dart';
-import '../user_model/user.dart';
 
 class CloudStore {
   final CollectionReference _userStore = FirebaseFirestore.instance.collection('user');
