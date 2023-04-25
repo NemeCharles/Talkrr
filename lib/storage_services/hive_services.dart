@@ -23,7 +23,7 @@ class HiveServices {
     await _box.put(_userDataStorageKey, value);
   }
 
-  Future<LoggedInUserData?> getUser() async {
+  LoggedInUserData? getUser() {
     final user = _box.get(_userDataStorageKey);
     return user;
   }
