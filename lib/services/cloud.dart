@@ -8,6 +8,7 @@ class CloudStore {
   final CollectionReference _userStore = FirebaseFirestore.instance.collection('user');
   final CollectionReference _messageStore = FirebaseFirestore.instance.collection('messages');
   List<UserData> users = <UserData>[];
+  String text = 'TESTING 1 2 3';
 
   loadAllUsers() async {
     final loggedInUser = HiveServices().getUser();
@@ -20,7 +21,7 @@ class CloudStore {
         users.clear();
         user.map((user) =>
           users.add(user.data())).toList();
-        print("Number of users: ${users.length}");
+        print("Number of users: ${users.length}, ${users.first.displayName}");
       });
     } catch(e) {print(e);}
   }
@@ -32,10 +33,9 @@ class CloudStore {
         fromFirestore: (snapshot, _) => MsgOverviewModel.fromJSON(snapshot.data()!),
         toFirestore: (msgOverview, _) => msgOverview.toJSON()
       ).where('sender_uid', isEqualTo: loggedInUser?.uid).get();
+      print(chats.docs.length);
     }catch(e){print(e);}
   }
-
-  // collection(messages) -> doc(list of dms) -> field of messageOverview -> collection(msgList) -> doc(list of messages) -> field(messages)
 
   void sendMessage (UserData data) async {
     final loggedInUser = HiveServices().getUser();
@@ -85,21 +85,34 @@ class CloudStore {
           toFirestore: (messageModel, _) => messageModel.toJSON()
         ).add(
           MessageModel(
-            message: 'Hello',
+            message: text,
             deliveredTime: Timestamp.now(),
             senderUid: loggedInUser?.uid
           )
         );
+
         await _messageStore.doc(messageView2.id).collection('msg_list').withConverter(
             fromFirestore: (snapshot, _) => MessageModel.fromJSON(snapshot.data()!),
             toFirestore: (messageModel, _) => messageModel.toJSON()
         ).add(
             MessageModel(
-                message: 'Hello',
+                message: text,
                 deliveredTime: Timestamp.now(),
                 senderUid: loggedInUser?.uid
             )
         );
+
+        await _messageStore.doc(messageView1.id).update({
+          'last_message': text,
+          'timestamp': Timestamp.now()
+        });
+
+        await _messageStore.doc(messageView2.id).update({
+          'last_message': text,
+          'timestamp': Timestamp.now()
+        });
+
+
       } else {
 
         await _messageStore.doc(user1Messages.docs.first.id).collection('msg_list').withConverter(
@@ -107,21 +120,33 @@ class CloudStore {
             toFirestore: (messageModel, _) => messageModel.toJSON()
         ).add(
             MessageModel(
-                message: 'Hello',
+                message: text,
                 deliveredTime: Timestamp.now(),
                 senderUid: loggedInUser?.uid
             )
         );
+
         await _messageStore.doc(user2Messages.docs.first.id).collection('msg_list').withConverter(
             fromFirestore: (snapshot, _) => MessageModel.fromJSON(snapshot.data()!),
             toFirestore: (messageModel, _) => messageModel.toJSON()
         ).add(
             MessageModel(
-                message: 'Hello',
+                message: text,
                 deliveredTime: Timestamp.now(),
                 senderUid: loggedInUser?.uid
             )
         );
+
+        await _messageStore.doc(user1Messages.docs.first.id).update({
+          'last_message': text,
+          'timestamp': Timestamp.now()
+        }).catchError((e){print(e);});
+
+        await _messageStore.doc(user2Messages.docs.first.id).update({
+          'last_message': text,
+          'timestamp': Timestamp.now()
+        });
+
       }
     }catch(e) {print(e);}
   }
