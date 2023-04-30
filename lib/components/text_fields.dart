@@ -77,10 +77,11 @@ class MessageField extends StatelessWidget {
           SizedBox(width: 7.w,),
           SizedBox(
             width: 250,
-            child: TextField(
+            child: TextFormField(
               keyboardType: TextInputType.multiline,
               style: TextStyle(fontSize: 18.sp),
-              maxLines: 2,
+              maxLines: 3,
+              minLines: 1,
               cursorHeight: 20.h,
               decoration: const InputDecoration(
                   hintText: 'Type your message',
@@ -97,9 +98,48 @@ class MessageField extends StatelessWidget {
 }
 
 
-// keytool -list -v \-alias androiddebugkey -keystore %USERPROFILE%\.android\debug.keystore
-// .\keytool -list -v \ -alias androiddebugkey -keystore %USERPROFILE%\.android\debug.keystore
-//
-//
-// C:\Program Files\Android\Android Studio\jre\bin
-// keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+class MediaMessageField extends StatelessWidget {
+  const MediaMessageField({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 315.w,
+      height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      decoration: BoxDecoration(
+        color: const Color(0XFF202020),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.emoji_emotions,
+            size: 28.sp,
+            color: const Color(0XFF0BC4D9),
+          ),
+          SizedBox(width: 7.w,),
+          SizedBox(
+            width: 250,
+            child: TextFormField(
+              style: TextStyle(fontSize: 18.sp, color: const Color(0XFFF4F4F4)),
+              maxLines: 1,
+              minLines: 1,
+              cursorHeight: 20.h,
+              decoration: const InputDecoration(
+                  hintText: 'Add a caption',
+                  hintStyle: TextStyle(color: Color(0XFFF4F4F4)),
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.zero
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
