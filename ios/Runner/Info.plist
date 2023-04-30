@@ -13,6 +13,8 @@
             </array>
         </dict>
     </array>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>In order to access your photo library</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
