@@ -26,8 +26,8 @@ class FireAuth {
               uid: user.user?.uid,
               profilePhoto: '',
             )
-        ).then((value) {
-          _hive.addUser(
+        ).then((value) async {
+          await _hive.addUser(
             LoggedInUserData(
               userName: displayName,
               email: email,
@@ -51,7 +51,6 @@ class FireAuth {
     try{
       UserCredential user = await _auth.
       signInWithEmailAndPassword(email: email, password: password);
-      print('SIGN IN SUCCESSFUL');
 
       await _userStore.withConverter<UserData>(
           fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
@@ -66,6 +65,7 @@ class FireAuth {
               profilePhoto: test.profilePhoto.toString(),
             )
           );
+          print('SIGN IN SUCCESSFUL');
       });
 
     } on FirebaseAuthException catch (e) {
