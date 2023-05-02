@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../components/enums/message_type.dart';
 
 class MsgOverviewModel {
 
@@ -8,7 +9,8 @@ class MsgOverviewModel {
   this.senderUid,
   this.receiverDp,
   this.lastMessage,
-  this.lastTime
+  this.messageType,
+  this.lastTime,
   });
 
   final String? receiverDisplayName;
@@ -16,7 +18,9 @@ class MsgOverviewModel {
   final String? senderUid;
   final String? receiverDp;
   final String? lastMessage;
+  final MessageType? messageType;
   final Timestamp? lastTime;
+
 
   MsgOverviewModel.fromJSON(Map<String, dynamic> data) :
       this(
@@ -25,6 +29,7 @@ class MsgOverviewModel {
         receiverUid: data['receiver_uid'],
         senderUid: data['sender_uid'],
         lastMessage: data['last_message'],
+        messageType: (data['message_type'] as String).toEnum(),
         lastTime: data['timestamp']
       );
 
@@ -35,6 +40,7 @@ class MsgOverviewModel {
       'receiver_uid': receiverUid,
       'sender_uid': senderUid,
       'last_message': lastMessage,
+      'message_type': messageType!.type,
       'timestamp': lastTime
     };
   }
