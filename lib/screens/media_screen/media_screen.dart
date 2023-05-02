@@ -45,7 +45,7 @@ class _MediaScreenState extends State<MediaScreen> {
   void loadMoreAssets() async {
     final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
         onlyAll: true,
-        type: RequestType.image
+        type: RequestType.common
     );
       List<AssetEntity> entities = await paths[0].getAssetListPaged(
           page: currentPage,
@@ -128,7 +128,39 @@ class _MediaScreenState extends State<MediaScreen> {
                 },
               );
             }
-            return const SizedBox();
+            return FutureBuilder(
+                    future: assets[index].thumbnailDataWithSize(const ThumbnailSize(300, 300)),
+                    builder: (context, snapshot) {
+                      if(snapshot.hasData) {
+                        return InkWell(
+                          onTap: () async {},
+                          child: Stack(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.all(1),
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: MemoryImage(snapshot.data!),
+                                        fit: BoxFit.cover
+                                    )
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 5,
+                                left: 2,
+                                child: Icon(
+                                  Icons.videocam,
+                                  size: 15.sp,
+                                  color: Colors.white,
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      }
+                      return const SizedBox();
+                      },
+            );
           },
         ),
       )
