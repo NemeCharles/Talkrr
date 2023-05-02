@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -17,39 +14,52 @@ class MediaScreen extends StatefulWidget {
 class _MediaScreenState extends State<MediaScreen> {
 
   int currentPage = 0;
-  late Future<List<File?>> photos;
+  int pageSize = 30;
+  int totalAssets = 0;
+  List<AssetEntity> assets = [];
 
-  void loadPhotos() {
-    photos = requestAssets();
-  }
-
-  Future<List<File?>> requestAssets() async {
-    List<File?> test = [];
+  void requestAssets() async {
     final PermissionState permission = await PhotoManager.requestPermissionExtend();
     if(!permission.isAuth) {
       await PhotoManager.openSetting();
     }
     final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
       onlyAll: true,
-      type: RequestType.image
+      type: RequestType.common
     );
+    final assetNum = await paths[0].assetCountAsync;
     if(paths.isNotEmpty) {
-      List<AssetEntity> pathImages = await paths[0].getAssetListPaged(
-          page: currentPage,
-          size: 30
+      List<AssetEntity> entities = await paths[0].getAssetListPaged(
+          page: 0,
+          size: pageSize
       );
-      for(AssetEntity image in pathImages) {
-        // final thumb = await image.thumbnailDataWithSize(const ThumbnailSize(200, 200));
-        final thumb = await image.file;
-        test.add(thumb);
-      }
+      setState(() {
+        currentPage++;
+        assets.addAll(entities);
+        totalAssets = assetNum;
+      });
     }
-    return test;
+
+  }
+
+  void loadMoreAssets() async {
+    final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
+        onlyAll: true,
+        type: RequestType.image
+    );
+      List<AssetEntity> entities = await paths[0].getAssetListPaged(
+          page: currentPage,
+          size: pageSize
+      );
+      setState(() {
+        assets.addAll(entities);
+        currentPage++;
+      });
   }
 
   @override
   void initState() {
-    loadPhotos();
+    requestAssets();
     super.initState();
   }
 
@@ -83,38 +93,44 @@ class _MediaScreenState extends State<MediaScreen> {
           ),
         ),
       ),
-      body: FutureBuilder(
-        future: photos,
-        builder: (context, snapshot) {
-          if(snapshot.hasData) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 7),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-                itemCount: snapshot.data!.length,
-                itemBuilder: (_, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (BuildContext context) =>  MediaViewScreen(image: snapshot.data![index]!,))
-                      );
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: FileImage(snapshot.data![index]!),
-                              fit: BoxFit.cover
-                          )
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 7),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+          itemCount: assets.length,
+          itemBuilder: (_, index) {
+            if(assets[index].type == AssetType.image) {
+              if(index + 1 == assets.length - 6 && assets.length != totalAssets) {
+                loadMoreAssets();
+              }
+              return FutureBuilder(
+                future: assets[index].file,
+                builder: (context, snapshot) {
+                  if(snapshot.hasData) {
+                    return InkWell(
+                      onTap: () async {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (BuildContext context) =>  MediaViewScreen(image: snapshot.data!,))
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(1),
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: FileImage(snapshot.data!),
+                                fit: BoxFit.cover
+                            )
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  }
+                  return const SizedBox();
                 },
-              ),
-            );
-          }
-          return const SizedBox();
-        },
+              );
+            }
+            return const SizedBox();
+          },
+        ),
       )
     );
   }
