@@ -110,16 +110,19 @@ class _MediaScreenState extends State<MediaScreen> {
                     return InkWell(
                       onTap: () async {
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (BuildContext context) =>  MediaViewScreen(image: snapshot.data!,))
+                            MaterialPageRoute(builder: (BuildContext context) =>  MediaViewScreen(image: snapshot.data!, tag: assets[index].id,))
                         );
                       },
-                      child: Container(
-                        margin: const EdgeInsets.all(1),
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: FileImage(snapshot.data!),
-                                fit: BoxFit.cover
-                            )
+                      child: Hero(
+                        tag: assets[index].id,
+                        child: Container(
+                          margin: const EdgeInsets.all(1),
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: FileImage(snapshot.data!),
+                                  fit: BoxFit.cover
+                              )
+                          ),
                         ),
                       ),
                     );
