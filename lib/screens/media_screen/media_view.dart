@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:photo_view/photo_view.dart';
 import '../../components/text_fields.dart';
 
@@ -18,6 +19,32 @@ class MediaViewScreen extends StatefulWidget {
 }
 
 class _MediaViewScreenState extends State<MediaViewScreen> {
+
+  late File image;
+  void cropImage () async {
+    final test = await ImageCropper().cropImage(
+        sourcePath: widget.image.path,
+        uiSettings: [
+          AndroidUiSettings(
+            lockAspectRatio: false,
+            initAspectRatio: CropAspectRatioPreset.original,
+            hideBottomControls: true
+          )
+        ]
+    );
+    if(test == null) return;
+    final imageFile = File(test.path);
+    setState(() {
+      image = imageFile;
+    });
+  }
+
+  @override
+  void initState() {
+    image = widget.image;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +60,7 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
                 constraints: BoxConstraints(maxHeight: 700.h),
                 child: ClipRect(
                   child: PhotoView(
-                    imageProvider: FileImage(widget.image),
+                    imageProvider: FileImage(image),
                     minScale: PhotoViewComputedScale.contained * 1,
                     maxScale: PhotoViewComputedScale.covered * 2,
                     heroAttributes: PhotoViewHeroAttributes(tag: widget.tag),
@@ -83,7 +110,9 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
                     borderRadius: BorderRadius.circular(50),
                     child: InkWell(
                       splashColor: Colors.transparent,
-                      onTap: () {},
+                      onTap: () {
+                        cropImage();
+                      },
                       borderRadius: BorderRadius.circular(50),
                       child: SizedBox(
                         height: 45.h,
