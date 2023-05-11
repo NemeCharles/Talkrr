@@ -110,7 +110,7 @@ class _MediaScreenState extends State<MediaScreen> {
                     return InkWell(
                       onTap: () async {
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (BuildContext context) =>  MediaViewScreen(image: snapshot.data!, tag: assets[index].id,))
+                            MaterialPageRoute(builder: (BuildContext context) =>  ImageEditorScreen(image: snapshot.data!, tag: assets[index].id,))
                         );
                       },
                       child: Hero(
@@ -136,28 +136,41 @@ class _MediaScreenState extends State<MediaScreen> {
                     builder: (context, snapshot) {
                       if(snapshot.hasData) {
                         return InkWell(
-                          onTap: () async {},
-                          child: Stack(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.all(1),
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: MemoryImage(snapshot.data!),
-                                        fit: BoxFit.cover
+                          onTap: () async {
+                            await assets[index].file.then((value) =>
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (BuildContext context) => VideoEditorScreen(
+                                        video: value!,
+                                        tag: assets[index].id
                                     )
+                                    )
+                                )
+                            );
+                          },
+                          child: Hero(
+                            tag: assets[index].id,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.all(1),
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: MemoryImage(snapshot.data!),
+                                          fit: BoxFit.cover
+                                      )
+                                  ),
                                 ),
-                              ),
-                              Positioned(
-                                bottom: 5,
-                                left: 2,
-                                child: Icon(
-                                  Icons.videocam,
-                                  size: 15.sp,
-                                  color: Colors.white,
-                                ),
-                              )
-                            ],
+                                Positioned(
+                                  bottom: 5,
+                                  left: 2,
+                                  child: Icon(
+                                    Icons.videocam,
+                                    size: 15.sp,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         );
                       }
