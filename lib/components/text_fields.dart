@@ -53,30 +53,44 @@ class TextArea extends StatelessWidget {
 
 class MessageField extends StatelessWidget {
   const MessageField({
-    super.key,
+    super.key, required this.onTap,
   });
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 315.w,
+      width: 317.w,
       height: 50.h,
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.15),
+        color: const Color(0XFFE8E8E8),
         borderRadius: BorderRadius.circular(30),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.emoji_emotions,
-            size: 28.sp,
-            color: const Color(0XFF0BC4D9),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: InkWell(
+              onTap: () {},
+              borderRadius: BorderRadius.circular(50),
+              child: SizedBox(
+                width: 40,
+                child: Center(
+                  child: Icon(
+                    Icons.emoji_emotions,
+                    size: 25.sp,
+                    color: const Color(0XFF0BC4D9),
+                  ),
+                ),
+              ),
+            ),
           ),
-          SizedBox(width: 7.w,),
+          SizedBox(width: 3.w,),
           SizedBox(
-            width: 250,
+            width: 225,
             child: TextFormField(
               keyboardType: TextInputType.multiline,
               style: TextStyle(fontSize: 18.sp),
@@ -90,7 +104,24 @@ class MessageField extends StatelessWidget {
                   contentPadding: EdgeInsets.zero
               ),
             ),
-          )
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(50),
+              child: SizedBox(
+                width: 40,
+                child: Center(
+                  child: Icon(
+                    Icons.camera_alt,
+                    size: 25.sp,
+                    color: const Color(0XFF0BC4D9),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
