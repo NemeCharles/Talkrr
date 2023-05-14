@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:text_app/screens/media_screen/media_screen.dart';
 import '../../components/text_fields.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
@@ -122,7 +123,12 @@ class _BottomChatFieldState extends State<BottomChatField> {
           left: 5.w,
           child: Opacity(
               opacity: !isRecording ? 1 : 0,
-              child: MessageField(onTap: () { },)
+              child: MessageField(onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (
+                        BuildContext context) => const MediaScreen())
+                );
+              },)
           ),
         ),
         Positioned(
@@ -216,7 +222,7 @@ class _BottomChatFieldState extends State<BottomChatField> {
                 }
               }
               if(isCancelled) {
-                print('LET GO');
+                debugPrint('LET GO');
               }
             },
             child: AnimatedContainer(
