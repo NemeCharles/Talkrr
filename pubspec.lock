@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  agora_rtc_engine:
+    dependency: "direct main"
+    description:
+      name: agora_rtc_engine
+      sha256: "5463ac139a2f79b476352ae1c4565b2548e44185b532c1490b0c91f1a8ac6f70"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.1"
   analyzer:
     dependency: transitive
     description:
@@ -640,6 +648,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  iris_method_channel:
+    dependency: transitive
+    description:
+      name: iris_method_channel
+      sha256: "5bd4f6ca1573744232bed153d30473ec6607cdc5e7ba9a45eaa9ae427cd7cc7d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0-rc.5"
   js:
     dependency: transitive
     description:
@@ -788,18 +804,18 @@ packages:
     dependency: "direct main"
     description:
       name: permission_handler
-      sha256: "5749ebeb7ec0c3865ea17e3eb337174b87747be816dab582c551e1aff6f6bbf3"
+      sha256: "33c6a1253d1f95fd06fa74b65b7ba907ae9811f9d5c1d3150e51417d04b8d6a8"
       url: "https://pub.dev"
     source: hosted
-    version: "9.2.0"
+    version: "10.2.0"
   permission_handler_android:
     dependency: transitive
     description:
       name: permission_handler_android
-      sha256: a512e0fa8abcb0659d938ec2df93a70eb1df1fdea5fdc6d79a866bfd858a28fc
+      sha256: d8cc6a62ded6d0f49c6eac337e080b066ee3bce4d405bd9439a61e1f1927bfe8
       url: "https://pub.dev"
     source: hosted
-    version: "9.0.2+1"
+    version: "10.2.1"
   permission_handler_apple:
     dependency: transitive
     description:
