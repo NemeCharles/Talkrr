@@ -18,6 +18,9 @@ class _OutgoingCallState extends State<OutgoingCall> {
   late final RtcEngine engine;
   ChannelProfileType channelProfileType = ChannelProfileType.channelProfileLiveBroadcasting;
   bool isConnected = false;
+  bool enabledSpeaker = false;
+  bool enabledMic = true;
+  bool userJoined = false;
 
 
   void initEngine() async {
@@ -36,7 +39,13 @@ class _OutgoingCallState extends State<OutgoingCall> {
         });
       },
       onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-        debugPrint( '[onLeaveChannel] connection: ${connection.toJson()} uid: $remoteUid');
+        debugPrint( '[USER JOINED] connection: ${connection.toJson()} uid: $remoteUid');
+        setState(() {
+          userJoined = true;
+        });
+      },
+      onRtcStats: (RtcConnection connection, RtcStats stats) {
+        debugPrint( '[CALL ONGOING] connection: ${connection.toJson()} duration: ${stats.duration}');
       },
       onLeaveChannel: (RtcConnection connection, RtcStats stats) {
         debugPrint( '[USER LEFT THE ROOM] connection: ${connection.toJson()} stats: ${stats.duration}');
@@ -60,8 +69,9 @@ class _OutgoingCallState extends State<OutgoingCall> {
       debugPrint('PERMISSION DENIED');
       return;
     }
+    await engine.setDefaultAudioRouteToSpeakerphone(false);
     await engine.joinChannel(
-      token: '007eJxTYKhl3SjvfoZlu0TOxsBTf56Ir57Dd29T9V75rxkmLieumh1VYLBITU1OMzZONkm0SDRJNgQS5sYWJiaWhuaGhpZGliaKbckpDYGMDNcnqDIwQiGIL8hQkpiTXVSkW5afmZyqm5yYk8PAAAAFLCPc',
+      token: '007eJxTYPjJz3n51yeLpNY5/QFL9Nu3HXVlUvJkf7X+4aylLdutxdIVGCxSU5PTjI2TTRItEk2SDYGEubGFiYmlobmhoaWRpcmWJykpDYGMDGXBFcyMDBAI4gsylCTmZBcV6ZblZyan6iYn5uQwMAAAF7EkGg==',
       channelId: 'talkrr-voice-call',
       uid: 0,
       options: ChannelMediaOptions(
@@ -78,10 +88,16 @@ class _OutgoingCallState extends State<OutgoingCall> {
   }
 
   void toggleSpeaker() async {
-    await engine.setEnableSpeakerphone(false);
+    await engine.setEnableSpeakerphone(!enabledSpeaker);
+    setState(() {
+      enabledSpeaker = !enabledSpeaker;
+    });
   }
   void toggleMic() async {
-    await engine.enableLocalAudio(true);
+    await engine.enableLocalAudio(!enabledMic);
+    setState(() {
+      enabledMic = !enabledMic;
+    });
   }
 
   @override
@@ -161,9 +177,19 @@ class _OutgoingCallState extends State<OutgoingCall> {
                           fontWeight: FontWeight.w500,
                           color: const Color(0XFFF4F4F4)
                         ),
-                      )
+                      ),
                     ],
-                  )
+                  ),
+                  Text(
+                    userJoined ?
+                    'user has joined' :
+                    'Connecting',
+                    style: TextStyle(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0XFFF4F4F4)
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -195,40 +221,45 @@ class _OutgoingCallState extends State<OutgoingCall> {
                     ),
                   ),
                   GestureDetector(
+                    onTap: () {
+                      toggleMic();
+                    },
                     child: Container(
                       height: 50.h,
                       width: 50.w,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: enabledMic ? const Color(0XFFF4F4F4) :Colors.white.withOpacity(0.2),
                           shape: BoxShape.circle
                       ),
                       child: Icon(
-                        Icons.mic,
-                        color: const Color(0XFFF4F4F4),
+                        enabledMic ? Icons.mic_off : Icons.mic,
+                        color: enabledMic ? Colors.black : const Color(0XFFF4F4F4),
                         size: 30.sp,
                       ),
                     ),
                   ),
                   GestureDetector(
+                    onTap: () {
+                      toggleSpeaker();
+                    },
                     child: Container(
                       height: 50.h,
                       width: 50.w,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: enabledSpeaker ? const Color(0XFFF4F4F4) :Colors.white.withOpacity(0.2),
                           shape: BoxShape.circle
                       ),
                       child: Icon(
-                        Icons.volume_up,
-                        color: const Color(0XFFF4F4F4),
+                        enabledSpeaker ? Icons.volume_off : Icons.volume_up,
+                        color: enabledSpeaker ? Colors.black : const Color(0XFFF4F4F4),
                         size: 30.sp,
                       ),
                     ),
                   ),
                   GestureDetector(
                     onTap: () async {
-                      leaveChannel();
                       Navigator.pop(context);
                     },
                     child: Container(
