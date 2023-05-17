@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+const appId = '8eecf33c4a8a4c18a473844917119294';
+
 class OutgoingCall extends StatefulWidget {
   const OutgoingCall({Key? key}) : super(key: key);
 
@@ -10,7 +15,86 @@ class OutgoingCall extends StatefulWidget {
 class _OutgoingCallState extends State<OutgoingCall> {
 
   final String testImage = 'https://firebasestorage.googleapis.com/v0/b/chat-app-96c03.appspot.com/o/images%2FtestImage?alt=media&token=338145f0-9d7d-43d5-9c1b-0e8dd2c949f0';
+  late final RtcEngine engine;
+  ChannelProfileType channelProfileType = ChannelProfileType.channelProfileLiveBroadcasting;
+  bool isConnected = false;
 
+
+  void initEngine() async {
+    engine = createAgoraRtcEngine();
+    await engine.initialize(const RtcEngineContext(
+      appId: appId
+    ));
+    engine.registerEventHandler(RtcEngineEventHandler(
+      onError: (ErrorCodeType err, String msg) {
+        debugPrint('[onError] err: $err, msg: $msg');
+      },
+      onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+        debugPrint('[CHANNEL JOINED SUCCESSFULLY] connection: ${connection.toJson()} elapsed: $elapsed');
+        setState(() {
+          isConnected = true;
+        });
+      },
+      onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+        debugPrint( '[onLeaveChannel] connection: ${connection.toJson()} uid: $remoteUid');
+      },
+      onLeaveChannel: (RtcConnection connection, RtcStats stats) {
+        debugPrint( '[USER LEFT THE ROOM] connection: ${connection.toJson()} stats: ${stats.duration}');
+      },
+      onConnectionLost: (RtcConnection connection) {
+        debugPrint( '[onConnectionStateLost] connection: ${connection.toJson()}');
+      },
+    ));
+    await engine.enableAudio();
+    await engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+    await engine.setAudioProfile(
+        profile: AudioProfileType.audioProfileDefault,
+        scenario: AudioScenarioType.audioScenarioGameStreaming
+    );
+    await joinChannel();
+  }
+
+  Future<void> joinChannel() async {
+    final micStatus = await Permission.microphone.request();
+    if(micStatus != PermissionStatus.granted) {
+      debugPrint('PERMISSION DENIED');
+      return;
+    }
+    await engine.joinChannel(
+      token: '007eJxTYKhl3SjvfoZlu0TOxsBTf56Ir57Dd29T9V75rxkmLieumh1VYLBITU1OMzZONkm0SDRJNgQS5sYWJiaWhuaGhpZGliaKbckpDYGMDNcnqDIwQiGIL8hQkpiTXVSkW5afmZyqm5yYk8PAAAAFLCPc',
+      channelId: 'talkrr-voice-call',
+      uid: 0,
+      options: ChannelMediaOptions(
+        channelProfile: channelProfileType,
+        clientRoleType: ClientRoleType.clientRoleBroadcaster
+      ),
+    );
+  }
+
+  void leaveChannel() async {
+    await engine.leaveChannel();
+    await engine.release();
+    isConnected = false;
+  }
+
+  void toggleSpeaker() async {
+    await engine.setEnableSpeakerphone(false);
+  }
+  void toggleMic() async {
+    await engine.enableLocalAudio(true);
+  }
+
+  @override
+  void initState() {
+    initEngine();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    leaveChannel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +153,9 @@ class _OutgoingCallState extends State<OutgoingCall> {
                       ),
                       SizedBox(height: 5.h,),
                       Text(
-                        'Connecting...',
+                        isConnected ?
+                        'Connected...' :
+                        'Connecting',
                         style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
@@ -141,6 +227,10 @@ class _OutgoingCallState extends State<OutgoingCall> {
                     ),
                   ),
                   GestureDetector(
+                    onTap: () async {
+                      leaveChannel();
+                      Navigator.pop(context);
+                    },
                     child: Container(
                       height: 50.h,
                       width: 50.w,
