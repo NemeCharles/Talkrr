@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:text_app/screens/signUp_screen.dart';
-import '../components/account_tile.dart';
-import '../components/text_fields.dart';
+import 'package:text_app/screens/home_screen.dart';
+import 'package:text_app/screens/signup_screen/signUp_screen.dart';
+import '../../components/account_tile.dart';
+import '../../components/text_fields.dart';
+import 'controller.dart';
 
-class SignInScreen extends StatefulWidget {
+class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  ConsumerState<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInScreenState extends ConsumerState<SignInScreen> {
 
-  late final TextEditingController email;
-  late final TextEditingController password;
+
 
   @override
   void initState() {
-    email = TextEditingController();
-    password = TextEditingController();
+    ref.read(signInController).initialiseController();
     super.initState();
   }
 
   @override
-  void dispose() {
-    email.dispose();
-    password.dispose();
-    super.dispose();
+  void deactivate() {
+    ref.read(signInController).disposeControllers();
+    super.deactivate();
   }
+
 
 
   @override
@@ -70,7 +71,7 @@ class _SignInScreenState extends State<SignInScreen> {
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
                   width: double.maxFinite,
-                  height: 673.5.h,
+                  height: 674.4.h,
                   decoration: const BoxDecoration(
                       color: Color(0XFFF4F4F4),
                       borderRadius: BorderRadius.only(
@@ -91,7 +92,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       SizedBox(height: 8.h,),
                       TextArea(
-                        controller: email,
+                        controller: ref.read(signInController).email,
                       ),
                       SizedBox(height: 8.h,),
                       Text(
@@ -102,7 +103,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       SizedBox(height: 8.h,),
-                      TextArea(controller: password, hintText: 'Enter Password', isPassword : true),
+                      TextArea(controller:  ref.read(signInController).password, hintText: 'Enter Password', isPassword : true),
                       SizedBox(height: 10.h,),
                       Align(
                         alignment: Alignment.centerRight,
@@ -119,7 +120,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       SizedBox(height: 20.h,),
                       GestureDetector(
-                        onTap: () async {},
+                        onTap: () {
+                          ref.read(signInController).signInWithEmail(context: context);
+                          },
                         child: Container(
                           height: 40,
                           width: 344.w,
