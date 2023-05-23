@@ -60,6 +60,8 @@ dependencies:
   permission_handler: ^10.2.0
   agora_rtc_engine: ^6.0.0
 
+  flutter_riverpod: ^2.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
