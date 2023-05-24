@@ -1,39 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:text_app/screens/signIn_screen.dart';
-import '../components/account_tile.dart';
-import '../components/text_fields.dart';
+import 'package:text_app/screens/sign_in_screen/signIn_screen.dart';
+import 'package:text_app/screens/signup_screen/controller.dart';
+import '../../components/account_tile.dart';
+import '../../components/text_fields.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
-  late final TextEditingController email;
-  late final TextEditingController username;
-  late final TextEditingController password1;
-  late final TextEditingController password2;
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   @override
   void initState() {
-    email = TextEditingController();
-    username = TextEditingController();
-    password1 = TextEditingController();
-    password2 = TextEditingController();
     super.initState();
+    ref.read(signUpController).initialiseController();
   }
 
   @override
-  void dispose() {
-    email.dispose();
-    username.dispose();
-    password1.dispose();
-    password2.dispose();
-    super.dispose();
+  void deactivate() {
+    ref.read(signUpController).disposeControllers();
+    super.deactivate();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +67,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
                   width: double.maxFinite,
-                  height: 673.5.h,
+                  height: 674.4.h,
                   decoration: const BoxDecoration(
                   color: Color(0XFFF4F4F4),
                   borderRadius: BorderRadius.only(
@@ -94,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     SizedBox(height: 8.h,),
-                    TextArea(controller: username, hintText: 'Enter Username', isUsername: true),
+                    TextArea(controller: ref.watch(signUpController).username, hintText: 'Enter Username', isUsername: true),
                     SizedBox(height: 8.h,),
                     Text(
                         'Enter Email Address',
@@ -105,7 +98,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     SizedBox(height: 8.h,),
                     TextArea(
-                      controller: email,
+                      controller: ref.watch(signUpController).email,
                     ),
                     SizedBox(height: 8.h,),
                     Text(
@@ -117,7 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     SizedBox(height: 8.h,),
                     TextArea(
-                        controller: password1,
+                        controller: ref.watch(signUpController).password1,
                         hintText: 'Enter Password',
                         isPassword : true
                     ),
@@ -130,13 +123,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     SizedBox(height: 8.h,),
-                    TextArea(controller: password2, hintText: 'Re-Enter Password', isPassword : true),
+                    TextArea(controller: ref.watch(signUpController).password2, hintText: 'Re-Enter Password', isPassword : true),
                     SizedBox(height: 25.h,),
                     GestureDetector(
                       onTap: () async {
-                        if(password1.text == password2.text){
-                          print('SUCCESS');
-                        } else {print ('Unmatched Passwords');}
+                        ref.read(signUpController).signUpWithEmail(context: context);
                       },
                       child: Container(
                         height: 40,
