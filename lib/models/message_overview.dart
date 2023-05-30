@@ -11,6 +11,7 @@ class MsgOverviewModel {
   this.lastMessage,
   this.messageType,
   this.lastTime,
+  this.messageCount,
   });
 
   final String? receiverDisplayName;
@@ -20,6 +21,7 @@ class MsgOverviewModel {
   final String? lastMessage;
   final MessageType? messageType;
   final Timestamp? lastTime;
+  final int? messageCount;
 
 
   MsgOverviewModel.fromJSON(Map<String, dynamic> data) :
@@ -30,7 +32,8 @@ class MsgOverviewModel {
         senderUid: data['sender_uid'],
         lastMessage: data['last_message'],
         messageType: (data['message_type'] as String).toEnum(),
-        lastTime: data['timestamp']
+        lastTime: data['timestamp'],
+        messageCount: data['message_count']
       );
 
   Map<String, dynamic> toJSON () {
@@ -41,7 +44,8 @@ class MsgOverviewModel {
       'sender_uid': senderUid,
       'last_message': lastMessage,
       'message_type': messageType!.type,
-      'timestamp': lastTime
+      'timestamp': lastTime,
+      'message_count': messageCount,
     };
   }
 }

@@ -53,10 +53,15 @@ class TextArea extends StatelessWidget {
 
 class MessageField extends StatelessWidget {
   const MessageField({
-    super.key, required this.onTap,
+    super.key,
+    required this.onTap,
+    required this.onChanged,
+    required this.controller
   });
 
   final VoidCallback onTap;
+  final void Function(String)? onChanged;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -92,9 +97,10 @@ class MessageField extends StatelessWidget {
           SizedBox(
             width: 225,
             child: TextFormField(
-              keyboardType: TextInputType.multiline,
               style: TextStyle(fontSize: 18.sp),
               maxLines: 3,
+              controller: controller,
+              onChanged: onChanged,
               minLines: 1,
               cursorHeight: 20.h,
               decoration: const InputDecoration(

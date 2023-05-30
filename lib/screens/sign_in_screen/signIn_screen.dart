@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:text_app/screens/home_screen.dart';
+import 'package:text_app/screens/home_screen/home_screen.dart';
 import 'package:text_app/screens/signup_screen/signUp_screen.dart';
 import '../../components/account_tile.dart';
 import '../../components/text_fields.dart';
