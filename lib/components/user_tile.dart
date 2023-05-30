@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../screens/chat_screen/chat_screen.dart';
+
 class UserTile extends StatelessWidget {
   const UserTile({
     required this.displayName,
     required this.profilePic,
+    required this.userId,
     super.key,
   });
 
   final String profilePic;
   final String displayName;
+  final String userId;
 
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){},
+      onTap: (){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext context) => ChatScreen(
+                uid: userId,
+                displayName: displayName,
+                profile: profilePic
+            )
+            )
+        );
+      },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 15.w),
         height: 65.h,
