@@ -2,7 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:text_app/storage_services/hive_services.dart';
 import 'package:text_app/storage_services/user_info/user_info.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user.dart';
+
+final fireAuthPod = Provider<FireAuth>((ref) => FireAuth());
 
 class FireAuth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -14,7 +17,6 @@ class FireAuth {
       UserCredential user = await _auth.
       createUserWithEmailAndPassword(email: email, password: password);
       print('SUCCESSFUL');
-
       if(user.user != null) {
         await _userStore.withConverter<UserData>(
             fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
@@ -47,7 +49,6 @@ class FireAuth {
   // Sign in with Email and Password
 
   Future<void> signInEmail (String email, String password) async {
-
     try{
       UserCredential user = await _auth.
       signInWithEmailAndPassword(email: email, password: password);
