@@ -57,6 +57,7 @@ dependencies:
   audioplayers: ^3.0.1
   path_provider: ^2.0.14
 
+  uuid: ^3.0.6
   permission_handler: ^10.2.0
   agora_rtc_engine: ^6.0.0
 
