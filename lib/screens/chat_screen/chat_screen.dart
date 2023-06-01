@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/message_tiles.dart';
 import '../../services/calls.dart';
-import '../../services/cloud.dart';
 import '../calls_screen/voice_call/outgoing.dart';
 import 'bottom_chat_field.dart';
 import 'controller.dart';
@@ -24,21 +23,20 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   final String image = 'https://firebasestorage.googleapis.com/v0/b/chat-app-96c03.appspot.com/o/images%2FtestImage?alt=media&token=338145f0-9d7d-43d5-9c1b-0e8dd2c949f0';
-  final String testAudio = 'https://firebasestorage.googleapis.com/v0/b/chat-app-96c03.appspot.com/o/senderID%2FuserID%2Faudios%2Ftest1?alt=media&token=bc0174e1-2291-470f-994d-affbba3b08fd';
-  final String testAudio2 = 'https://firebasestorage.googleapis.com/v0/b/chat-app-96c03.appspot.com/o/senderID%2FuserID%2Faudios%2Ftest2?alt=media&token=fe698b9e-9437-446c-93e4-c49305c5ec20';
 
   final CallManager _manager = CallManager();
-  final CloudStore _cloudStore = CloudStore();
 
   @override
   void initState() {
-    ref.read(chatScreenController).assignId(widget.uid);
+    ref.read(chatScreenController).assignReceiverInfo(uid: widget.uid, receiverName: widget.displayName, profile: widget.profile);
+    ref.read(chatScreenController).initialise();
     ref.read(chatScreenController).resetCount();
     super.initState();
   }
 
   @override
   void deactivate() {
+    ref.read(chatScreenController).disposeControllers();
     ref.read(chatScreenController).resetCount();
     super.deactivate();
   }
@@ -178,7 +176,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 data: (chats) {
                   return CustomScrollView(
                     controller: ref.watch(chatScreenController).scrollController,
-                    reverse: true,
                     slivers: [
                       SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
@@ -209,11 +206,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             BottomChatField(
               onTap: () async {
-                _cloudStore.sendMessage2(
-                  uid: widget.uid,
-                  displayName: widget.displayName,
-                  profilePhoto: widget.profile,
-                  message: ref.watch(chatScreenController).message.text.trim()
+                ref.read(chatScreenController).sendMessage(
+                  message: ref.watch(chatScreenController).message.text.trim(),
                 );
                 setState(() {
                   ref.read(chatScreenController).clearText();
@@ -227,7 +221,5 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 }
 
-
-//
 //   https://firebasestorage.googleapis.com/v0/b/chat-app-96c03.appspot.com/o/images%2FtestImage?alt=media&token=338145f0-9d7d-43d5-9c1b-0e8dd2c949f0
 //    https://firebasestorage.googleapis.com/v0/b/chat-app-96c03.appspot.com/o/images%2FtestImage1?alt=media&token=fedf53c3-491a-4600-8b3c-7b4f99a91511

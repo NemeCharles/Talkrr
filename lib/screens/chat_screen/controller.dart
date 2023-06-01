@@ -2,37 +2,31 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_sound/flutter_sound.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:text_app/models/user.dart';
-
+import '../../components/enums/message_type.dart';
 import '../../models/message.dart';
 import '../../models/message_overview.dart';
+import '../../services/cloud.dart';
 import '../../storage_services/hive_services.dart';
 
-final chatScreenController = Provider<ChatScreenController>((ref) => ChatScreenController(ref: ref));
+final chatScreenController = Provider.autoDispose<ChatScreenController>((ref) => ChatScreenController(
+  messageStore: ref.watch(cloudStorePod)
+));
 final chatStream = StreamProvider.autoDispose<List<MessageModel>>((ref) => ref.watch(chatScreenController).loadMessages());
 
 
 class ChatScreenController {
 
-  ChatScreenController({required this.ref});
-  final Ref ref;
+  ChatScreenController({required this.messageStore});
+  final CloudStore messageStore;
 
   late TextEditingController message;
   final CollectionReference _messageStore = FirebaseFirestore.instance.collection('message');
-  String id = '';
   late ScrollController scrollController;
-
-  // FlutterSoundRecorder? recorder = FlutterSoundRecorder();
-  // String? path = '';
-  // Timer? timer;
-
-  // final durationState = StateProvider<Duration>((ref) => const Duration());
-  // final recordingState = StateProvider<bool>((ref) => false);
-  // final cancelledState = StateProvider<bool>((ref) => false);
+  String id = '';
+  String displayName = '';
+  String profilePhoto = '';
 
   void initialise () async  {
     message = TextEditingController();
@@ -47,12 +41,24 @@ class ChatScreenController {
   }
 
 
-  void jumpToLastMessage() {
-    scrollController.jumpTo(scrollController.position.maxScrollExtent);
+  void jumpToLastMessage() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      if(scrollController.hasClients) {
+        scrollController.animateTo(scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 100), curve: Curves.easeOut);
+      }
+    });
   }
 
-  void assignId(String data) async {
-    id = data;
+  void assignReceiverInfo({
+    required String uid,
+    required String receiverName,
+    required String profile,
+  }) {
+    id = uid;
+    displayName = receiverName;
+    profilePhoto = profile;
   }
 
   Stream<List<MessageModel>> loadMessages() {
@@ -60,12 +66,11 @@ class ChatScreenController {
     return _messageStore.doc(loggedInUser?.uid).collection('dms').doc(id).collection('msg_list').withConverter(
         fromFirestore: (snapshot, _) => MessageModel.fromJSON(snapshot.data()!),
         toFirestore: (messageModel, _) => messageModel.toJSON()
-    ).orderBy('delivered_time', descending: true).snapshots().asyncMap((event) {
+    ).orderBy('delivered_time').snapshots().asyncMap((event) {
       List<MessageModel> messages = [];
       for(final message in event.docs) {
         messages.add(message.data());
       }
-      scrollController.jumpTo(scrollController.position.maxScrollExtent);
       return messages;
     });
   }
@@ -86,31 +91,29 @@ class ChatScreenController {
     }
   }
 
-  void sendMessage({required String id, required String displayName, required String profilePic}) {
-
+  void sendMessage({
+    required String message
+}) {
+    messageStore.sendMessage2(
+        uid: id,
+        displayName: displayName,
+        profilePhoto: profilePhoto,
+        message: message,
+        messageType: MessageType.text
+    );
+    jumpToLastMessage();
   }
 
+  void sendFileMessage({required MessageType messageType, required File file }) {
+    messageStore.sendFileMessage(
+      uid: id,
+      displayName: displayName,
+      profilePhoto: profilePhoto,
+      messageType: messageType,
+      file: file,
+    );
+    jumpToLastMessage();
+  }
 
-  // void startRecording() async {
-  //   final status = await Permission.microphone.request();
-  //   if(status != PermissionStatus.granted) {
-  //     throw RecordingPermissionException('MICROPHONE PERMISSION NOT GRANTED');
-  //   }
-  //   Directory tempDir = await getTemporaryDirectory();
-  //   path = '${tempDir.path}/voice_note.aac';
-  //   await recorder!.startRecorder(toFile: path, codec: Codec.defaultCodec);
-  //   ref.read(recordingState.notifier).update((state) => state = true);
-  //   startTimer();
-  // }
-  //
-  // void startTimer() {
-  //   timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-  //     final time = ref.watch(durationState).inSeconds + 1;
-  //     Consumer(builder: (BuildContext context, WidgetRef ref, Widget? child) {
-  //       ref.read(durationState.notifier).update((state) => state = Duration(seconds: time));
-  //       return SizedBox();
-  //     },);
-  //   });
-  // }
 
 }
